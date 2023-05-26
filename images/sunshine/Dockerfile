@@ -1,7 +1,7 @@
 ARG BASE_APP_IMAGE
 
 ######################################
-FROM ubuntu:22.04 AS sunshine-builder
+FROM ubuntu:kinetic AS sunshine-builder
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG BASE_APP_IMAGE
