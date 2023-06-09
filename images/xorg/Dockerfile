@@ -14,7 +14,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 # wget is needed by ensure-nvidia-xorg-driver
 ARG REQUIRED_PACKAGES=" \
     wget \
-    xserver-xorg-core xfonts-base x11-apps \
+    xserver-xorg-core xcvt xfonts-base x11-apps \
     x11-session-utils x11-utils x11-xfs-utils \
     x11-xserver-utils xauth x11-common \
     xz-utils unzip avahi-utils dbus \
@@ -25,6 +25,11 @@ ARG REQUIRED_PACKAGES=" \
     xserver-xorg-input-libinput \
     jwm libxft2 libxext6 breeze-cursor-theme \
     "
+
+# Configure container to run process as root user
+ENV \
+    UNAME="root" \
+    HOME="/root"
 
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends $REQUIRED_PACKAGES && \
