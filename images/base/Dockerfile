@@ -1,38 +1,64 @@
-FROM ubuntu:22.04
+FROM ubuntu:lunar
 
+# Configure default user and set env
+# The users UID and GID will be set on container startup
 ENV \
-    TZ="Europe/London" \
-    UNAME=retro \
     PUID=1000 \
-    PGID=1000
+    PGID=1000 \
+    UMASK=000 \
+    UNAME="retro" \
+    HOME="/home/retro" \
+    TZ="Europe/London"
 
-# These depend on values defined in the previous set, so they (sadly) must be
-# in their own layer.
-ENV HOME=/home/$UNAME
+ARG TARGETARCH TARGETVARIANT
 
-# Set up the user
-RUN --mount=type=bind,source=build/setup-retro-user,target=/setup-retro-user /setup-retro-user
+RUN <<_CONF_USER
+set -e
+echo "**** Configure default user '${UNAME}' ****"
+useradd -m -d ${HOME} -s /bin/bash ${UNAME}
+echo
+_CONF_USER
 
-# use ARG instead of ENV because we only need it at runtime
+# Install default required packages
 ARG DEBIAN_FRONTEND=noninteractive
-ARG REQUIRED_PACKAGES="\
-    sudo \
+ARG GOSU_VERSION=1.14
+
+RUN <<_INSTALL_PACKAGES
+set -e
+echo "**** Update apt database ****"
+apt-get update
+
+echo "**** Install certificates ****"
+apt-get install -y --reinstall --no-install-recommends \
+    ca-certificates
+
+echo "**** Install base packages ****"
+apt-get install -y --no-install-recommends \
     fuse \
     libnss3 \
-    "
+    wget
 
-RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
-    $REQUIRED_PACKAGES && \
-    rm -rf /var/lib/apt/lists/*
+echo "**** Install gosu ****"
+wget --progress=dot:giga \
+    -O /usr/bin/gosu \
+    "https://github.com/tianon/gosu/releases/download/${GOSU_VERSION}/gosu-${TARGETARCH}${TARGETVARIANT}"
+chmod +x /usr/bin/gosu
 
-WORKDIR $HOME
+echo "**** Verify gosu works ****"
+gosu nobody true && echo "Working!"
 
-COPY --chmod=777 scripts/bootstrap.sh /opt/gow/bootstrap.sh
-COPY --chmod=777 scripts/ensure-groups /opt/gow/ensure-groups
-COPY scripts/lib/ /opt/gow/bash-lib/
+echo "**** Section cleanup ****"
+rm -rf \
+    /var/lib/apt/lists/*
 
-CMD [ "/opt/gow/bootstrap.sh" ]
+echo
+_INSTALL_PACKAGES
+
+# Import overlay
+COPY overlay /
+
+# Set entrypoint script
+ENTRYPOINT ["/entrypoint.sh"]
 
 ARG IMAGE_SOURCE
 LABEL org.opencontainers.image.source $IMAGE_SOURCE

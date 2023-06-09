@@ -8,7 +8,7 @@ if [ "${SKIP_NVIDIA_DRIVER_CHECK:-0}" = "1" ]; then
     exit
 fi
 
-function fail() {
+fail() {
     (
         if [ -n "${1:-}" ]; then
             echo "$1"
@@ -21,7 +21,7 @@ function fail() {
 # If there's an nvidia_drv.so in the mount location, or in the location where
 # the xserver-xorg-video-nvidia package installs to, assume it's the right one
 for d in $NVIDIA_DRIVER_MOUNT_LOCATION $NVIDIA_PACKAGE_LOCATION; do
-    if [ -f $d/nvidia_drv.so ]; then
+    if [ -f "$d/nvidia_drv.so" ]; then
         echo "Found an existing nvidia_drv.so"
         exit
     fi
@@ -37,7 +37,7 @@ else
     echo "Looking for driver version $HOST_DRIVER_VERSION"
 fi
 
-function download_pkg() {
+download_pkg() {
     dl_url=$1
     dl_file=$2
 
@@ -49,7 +49,7 @@ function download_pkg() {
     fi
 }
 
-DOWNLOAD_URL=https://us.download.nvidia.com/XFree86/Linux-x86_64/$HOST_DRIVER_VERSION/NVIDIA-Linux-x86_64-$HOST_DRIVER_VERSION.run
+DOWNLOAD_URL=https://download.nvidia.com/XFree86/Linux-x86_64/$HOST_DRIVER_VERSION/NVIDIA-Linux-x86_64-$HOST_DRIVER_VERSION.run
 DL_FILE=/tmp/nvidia-$HOST_DRIVER_VERSION.run
 EXTRACT_LOC=/tmp/nvidia-drv
 
