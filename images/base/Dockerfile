@@ -1,6 +1,4 @@
-FROM ubuntu:kinetic
-=======
-# syntax=docker/dockerfile:1.4
+FROM ubuntu:lunar
 
 # Configure default user and set env
 # The users UID and GID will be set on container startup
