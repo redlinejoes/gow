@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1.4
-
 FROM ubuntu:lunar
 
 # Configure default user and set env
