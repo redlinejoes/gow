@@ -15,7 +15,7 @@ launch_env=("env/base.env" "env/build.env")
 compose_files=()
 apps=()
 
-gpu_type=none
+gpu_type=nvidia
 streamer=sunshine # by default, use sunshine to stream to moonlight
 platform=host
 quiet=false

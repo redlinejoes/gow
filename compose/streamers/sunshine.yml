@@ -15,12 +15,12 @@ services:
   # Sunshine is the heart of the streaming setup; it takes your desktop and
   # encodes it for delivery over the network
   sunshine:
-    image: ghcr.io/games-on-whales/sunshine:edge
-  # build:
-  #   context: ./images/sunshine
-  #   args:
-  #     BASE_IMAGE: ${BUILD_BASE_IMAGE}
-  #     BASE_APP_IMAGE: ${BUILD_BASE_APP_IMAGE}
+  # image: ghcr.io/games-on-whales/sunshine:edge
+    build:
+      context: ./images/sunshine
+      args:
+        BASE_IMAGE: ${BUILD_BASE_IMAGE}
+        BASE_APP_IMAGE: ${BUILD_BASE_APP_IMAGE}
 
     runtime: ${DOCKER_RUNTIME}
     ports:
